@@ -27,7 +27,7 @@ static async Task<List<King>> GetKings()
 {
     using (var httpClient = new HttpClient())
     {
-        var response = await httpClient.GetStringAsync("https://gist.githubusercontent.com/christianpanton/10d65ccef9f29de3acd49d97ed423736/raw/b09563bc0c4b318132c7a738e679d4f984ef0048/kings");
+        var response = await httpClient.GetStringAsync("https://gist.githubusercontent.com/SECRETAPI");
         return JsonConvert.DeserializeObject<List<King>>(response);
     }
 }
