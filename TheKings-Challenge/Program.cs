@@ -11,9 +11,9 @@ Console.WriteLine($"1 Total number of Monarchs: {kings.Count}");
 
 var longestReignKing = LongestReginMonarch(kings);
 
-var reignLength = CalculateReignLength(longestReignKing.Yrs);
+var reignLength = CalculateReignLength(longestReignKing.Years);
 
-Console.WriteLine($"2 The Longest reigning Monarch: {longestReignKing.Nm}, total reign length: {reignLength} years");
+Console.WriteLine($"2 The Longest reigning Monarch: {longestReignKing.Name}, total reign length: {reignLength} years");
 
 var longestRulingHouse = GetLongestRulingHouse(kings);
 
@@ -31,11 +31,10 @@ static async Task<List<King>> GetKings()
         return JsonConvert.DeserializeObject<List<King>>(response);
     }
 }
-
 static King LongestReginMonarch(List<King> kings)
 {
     var longestReignKing = kings
-        .OrderByDescending(k => CalculateReignLength(k.Yrs))
+        .OrderByDescending(k => CalculateReignLength(k.Years))
         .FirstOrDefault();
 
     return longestReignKing;
@@ -44,10 +43,10 @@ static King LongestReginMonarch(List<King> kings)
 static KeyValuePair<string, int> GetLongestRulingHouse(List<King> kings)
 {
     var longestRulingHouse = kings
-       .GroupBy(king => king.Hse)
+       .GroupBy(king => king.House)
        .ToDictionary(
            group => group.Key,
-           group => group.Sum(king => CalculateReignLength(king.Yrs))
+           group => group.Sum(king => CalculateReignLength(king.Years))
        )
        .OrderByDescending(kv => kv.Value)
        .FirstOrDefault();
@@ -76,21 +75,27 @@ static int CalculateReignLength(string years)
 static string GetMostCommonFirstName(List<King> kings)
 {
     var firstNameOccurrences = kings
-        .GroupBy(k => k.Nm.Split(' ').First(), StringComparer.OrdinalIgnoreCase)
-        .ToDictionary(g => g.Key, g => g.Count());
-
-    var mostCommonFirstName = firstNameOccurrences
+        .GroupBy(k => k.Name.Split(' ').First(), StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(g => g.Key, g => g.Count())
         .OrderByDescending(kv => kv.Value)
-        .FirstOrDefault();
+        .FirstOrDefault(); ;
 
-    return mostCommonFirstName.Key;
+    return firstNameOccurrences.Key;
 }
 
 public class King
 {
-    public  int Id { get; set; }
-    public string Nm { get; set; }
-    public string Cty { get; set; }
-    public string Hse { get; set; }
-    public string Yrs { get; set; }
+    public int Id { get; set; }
+
+    [JsonProperty("nm")]
+    public string Name { get; set; }
+
+    [JsonProperty("cty")]
+    public string Country { get; set; }
+
+    [JsonProperty("hse")]
+    public string House { get; set; }
+
+    [JsonProperty("yrs")]
+    public string Years { get; set; }
 }
